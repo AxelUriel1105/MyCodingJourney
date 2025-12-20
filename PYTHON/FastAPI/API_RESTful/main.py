@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from src.lib.managedb import ManageDb
+from src.repositories.managedb import ManageDb
 app = FastAPI()
 md = ManageDb()
 @app.get("/")
@@ -8,4 +8,14 @@ def root():
 
 @app.get("/api/contacts")
 def get_all_contacts():
-    
+    return md.read_contacts()
+
+@app.get("/api/contacts/{id_contact}")
+def get_single_contact(id_contact):
+    contacts = md.read_contacts()
+    for contact in contacts:
+        if contact["id"] == id_contact:
+            return contact
+    return {'Message': 'Couldn\'t find the contact'}
+def post():
+    return {'message': 'I am post'}

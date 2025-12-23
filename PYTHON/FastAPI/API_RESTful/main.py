@@ -1,9 +1,10 @@
 from fastapi import FastAPI, HTTPException
+from uuid import uuid4 as uuid #Nos permite generar id's únicos y uuid4 aleatorios
 from src.repositories.managedb import ManageDb
 from pydantic import BaseModel
 
 class ContactModel(BaseModel):
-    id: str = ""
+    id: str = str(uuid())
     name: str
     phone: str
 app = FastAPI()
@@ -34,3 +35,21 @@ def add_contact(new_contact: ContactModel):
 
     return {"success": True,
             "message": "Add new contact"}
+
+@app.put("/api/contacts/{id_contact}")
+def update_contact(id_contact:str, new_contact:ContactModel):
+    contacts = md.read_contacts()
+    
+    for index, contact in enumerate(contacts):
+        if contact["id"] == id_contact:
+            contacts[index] = new_contact.model_dump()
+            if new_contact.name == "":
+                contacts[index]["name"] = contact["name"]
+            if new_contact.phone =="":
+                contacts[index]["phone"] = contact["phone"]
+            md.write_contact(contacts)
+            return {
+                "success": True,
+                "message": "update contact"
+                }
+    raise HTTPException(status_code=404, detail="contact not found")

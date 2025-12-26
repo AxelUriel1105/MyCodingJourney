@@ -1,6 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from uuid import uuid4 as uuid #Nos permite generar id's únicos y uuid4 aleatorios
-from src.repositories.managedb import ManageDb
 from pydantic import BaseModel
 
 from src.router.get_contacts import get_contacts
@@ -14,7 +13,6 @@ class ContactModel(BaseModel):
     name: str
     phone: str
 app = FastAPI()
-md = ManageDb()
 
 @app.get("/")
 def root():
